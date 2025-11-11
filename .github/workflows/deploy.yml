@@ -2,29 +2,29 @@ name: Deploy Flutter Web
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-
-    - name: Install dependencies
-      run: flutter pub get
-
-    - name: Build web
-      run: flutter build web --release
-
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build/web
-        publish_branch: gh-pages
-        force_orphan: true
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        
+      - name: Build
+        run: |
+          flutter pub get
+          flutter build web --release 
+          
+      - name: Deploy
+        uses: s0/git-publish-subdir-action@develop
+        env:
+          REPO: self
+          BRANCH: gh-pages
+          FOLDER: build/web
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MESSAGE: "Deploy Flutter web app"
